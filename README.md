@@ -62,7 +62,7 @@ No backend, no frameworsk - optimized for clarity, speed, and iteration.
 
 ## 🚀 Live Demo (Web)
 
-👉 https://cozycode.github.io/Squiggle-lite/
+👉 https://cozycode-hub.github.io/Squiggle-lite/
 
 ---
 
