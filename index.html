@@ -1,0 +1,1176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Squiggle Lite</title>
+
+  <style>
+    :root{
+      --bg1:#f7f6ff;
+      --bg2:#ffffff;
+      --card:#ffffff;
+      --ink:#1f1f2e;
+      --muted:#6b6b86;
+      --accent:#7c5cff;
+      --accent2:#ff5ca8;
+      --good:#2ecc71;
+      --warn:#f1c40f;
+      --bad:#e74c3c;
+      --shadow:0 18px 45px rgba(23, 18, 48, 0.12);
+      --shadow2:0 10px 28px rgba(23, 18, 48, 0.10);
+      --radius:18px;
+    }
+    *{ box-sizing:border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 30% 0%, var(--bg2) 0%, var(--bg1) 55%) fixed,
+        radial-gradient(900px 500px at 85% 20%, rgba(255,92,168,.10) 0%, rgba(255,255,255,0) 55%) fixed,
+        radial-gradient(1000px 600px at 10% 70%, rgba(124,92,255,.10) 0%, rgba(255,255,255,0) 55%) fixed;
+    }
+
+    /* Layout */
+    .wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 22px 16px 64px;
+      display:grid;
+      gap:14px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 6px 2px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+    }
+    .logo{
+      width:42px; height:42px; border-radius:14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 12px 28px rgba(124,92,255,.25);
+      display:grid; place-items:center;
+      font-weight:900; color:white;
+      letter-spacing:.4px;
+      user-select:none;
+    }
+    .title{
+      display:flex; flex-direction:column;
+      line-height:1.1;
+    }
+    .title b{ font-size:18px; }
+    .title span{ font-size:13px; color:var(--muted); }
+
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
+    .gridTop{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .gridTop{ grid-template-columns: 1fr; }
+    }
+
+    /* Cards */
+    .card{
+      background: rgba(255,255,255,.80);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(124,92,255,.10);
+      padding: 16px;
+      backdrop-filter: blur(6px);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin: 2px 0 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Pills / badges */
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(0,0,0,.08);
+      background: rgba(124,92,255,.05);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .pill b{ color: var(--ink); }
+    .dot{
+      width:10px; height:10px; border-radius:999px; background: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+    }
+    .dot.good{ background: rgba(46,204,113,.9); box-shadow:0 0 0 4px rgba(46,204,113,.16); }
+    .dot.warn{ background: rgba(241,196,15,.95); box-shadow:0 0 0 4px rgba(241,196,15,.18); }
+    .dot.bad{  background: rgba(231,76,60,.95); box-shadow:0 0 0 4px rgba(231,76,60,.16); }
+
+    /* Quote + prompt */
+    .quote{
+      margin: 8px 0 10px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: rgba(255,92,168,.08);
+      border: 1px solid rgba(255,92,168,.14);
+      color: #4b2a3a;
+      font-size: 14px;
+    }
+    .prompt{
+      margin: 0 0 8px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: rgba(124,92,255,.07);
+      border: 1px solid rgba(124,92,255,.14);
+      color: #2a2750;
+      font-size: 14px;
+    }
+    .prompt b{ color: var(--ink); }
+
+    /* Mood buttons */
+    .moods{
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap:10px;
+      margin: 10px 0 12px;
+    }
+    @media (max-width: 560px){
+      .moods{ grid-template-columns: repeat(3, 1fr); }
+    }
+    .moodBtn{
+      background: #fff;
+      border:1px solid rgba(0,0,0,.10);
+      border-radius: 14px;
+      padding: 10px 10px;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      gap:8px;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .moodBtn:hover{
+      transform: translateY(-2px);
+      box-shadow: var(--shadow2);
+    }
+    .moodBtn:active{ transform: translateY(0px) scale(.99); }
+    .moodBtn[data-active="true"]{
+      border-color: rgba(124,92,255,.60);
+      box-shadow: 0 18px 30px rgba(124,92,255,.18);
+    }
+    .moodBtn span{ font-size:18px; }
+    .moodBtn small{ font-size:12px; color: var(--muted); }
+
+    /* Text input */
+    textarea, input, select{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(0,0,0,.12);
+      font-size: 14px;
+      outline: none;
+      background: rgba(255,255,255,.9);
+    }
+    textarea{ min-height: 92px; resize: vertical; }
+    textarea:focus, input:focus, select:focus{
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+    }
+
+    /* Buttons */
+    .btn{
+      border:none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor:pointer;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color:white;
+      box-shadow: 0 14px 28px rgba(124,92,255,.22);
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
+    }
+    .btn:hover{ filter: brightness(1.02); transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn.secondary{
+      background:#fff;
+      color: var(--ink);
+      border:1px solid rgba(0,0,0,.12);
+      box-shadow:none;
+      font-weight:700;
+    }
+    .btn.ghost{
+      background: transparent;
+      border:1px dashed rgba(0,0,0,.18);
+      box-shadow:none;
+      color: var(--ink);
+    }
+    .btn.small{ padding: 8px 10px; font-size: 13px; font-weight: 700; }
+    .btn.danger{
+      background: #fff;
+      color: var(--bad);
+      border:1px solid rgba(231,76,60,.25);
+      box-shadow:none;
+    }
+
+    /* Feed */
+    .toolbar{
+      display:grid;
+      grid-template-columns: 1.4fr .8fr .8fr;
+      gap:10px;
+      align-items:center;
+      margin-top: 10px;
+    }
+    @media (max-width: 820px){
+      .toolbar{ grid-template-columns: 1fr; }
+    }
+
+    .feed{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+      margin-top: 12px;
+    }
+    @media (max-width: 980px){ .feed{ grid-template-columns: repeat(2, 1fr);} }
+    @media (max-width: 650px){ .feed{ grid-template-columns: 1fr;} }
+
+    .entry{
+      padding: 14px;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.92);
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow: 0 10px 24px rgba(0,0,0,.07);
+      transition: transform .12s ease, box-shadow .12s ease;
+      position: relative;
+    }
+    .entry:hover{ transform: translateY(-2px); box-shadow: var(--shadow2); }
+    .entryTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom: 8px;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(124,92,255,.08);
+      border:1px solid rgba(124,92,255,.16);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .badge b{ color: var(--ink); }
+    .date{
+      font-size: 12px;
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .note{
+      margin: 0;
+      color: #2b2b3a;
+      font-size: 14px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+    .entryActions{
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      margin-top: 10px;
+    }
+    .empty{
+      color: var(--muted);
+      margin: 0;
+      padding: 18px 4px 6px;
+      text-align:center;
+    }
+
+    /* Insights */
+    .insightGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 560px){
+      .insightGrid{ grid-template-columns: 1fr; }
+    }
+    .stat{
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(255,255,255,.85);
+    }
+    .stat .k{ font-size: 12px; color: var(--muted); }
+    .stat .v{ font-size: 18px; font-weight: 900; margin-top: 2px; }
+
+    /* Calendar (last 30 days heatmap) */
+    .calHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .calHeader b{ font-size: 14px; }
+    .calLegend{
+      display:flex; gap:8px; align-items:center; color: var(--muted); font-size: 12px;
+    }
+    .legendDot{
+      width:10px; height:10px; border-radius:999px; border:1px solid rgba(0,0,0,.10);
+      background: rgba(0,0,0,.04);
+    }
+    .legendDot.l1{ background: rgba(231,76,60,.18); }
+    .legendDot.l2{ background: rgba(241,196,15,.20); }
+    .legendDot.l3{ background: rgba(46,204,113,.20); }
+    .calendar{
+      display:grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap:8px;
+      margin-top: 10px;
+    }
+    @media (max-width: 520px){
+      .calendar{ grid-template-columns: repeat(6, 1fr); }
+    }
+    .dayCell{
+      aspect-ratio: 1 / 1;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(0,0,0,.03);
+      display:grid;
+      place-items:center;
+      font-size: 13px;
+      color: rgba(0,0,0,.58);
+      position: relative;
+      overflow: hidden;
+      user-select:none;
+    }
+    .dayCell[data-level="0"]{ background: rgba(0,0,0,.03); }
+    .dayCell[data-level="1"]{ background: rgba(231,76,60,.16); }
+    .dayCell[data-level="2"]{ background: rgba(241,196,15,.18); }
+    .dayCell[data-level="3"]{ background: rgba(46,204,113,.18); }
+    .dayCell[data-today="true"]{
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.10) inset;
+      color: rgba(0,0,0,.75);
+      font-weight: 800;
+    }
+    .cellEmoji{
+      position:absolute;
+      bottom:8px;
+      right:8px;
+      font-size: 14px;
+      opacity: .95;
+    }
+    .cellTip{
+      position:absolute;
+      left:50%;
+      transform: translateX(-50%);
+      bottom: calc(100% + 8px);
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(0,0,0,.10);
+      box-shadow: 0 12px 26px rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 10px 10px;
+      width: 220px;
+      display:none;
+      z-index: 20;
+      text-align:left;
+      font-size: 12px;
+      color: var(--ink);
+    }
+    .dayCell:hover .cellTip{ display:block; }
+
+    /* Modal */
+    .modalBackdrop{
+      position: fixed; inset:0;
+      background: rgba(20, 15, 45, .25);
+      display:none;
+      place-items:center;
+      padding: 16px;
+      z-index: 999;
+      backdrop-filter: blur(6px);
+    }
+    .modal{
+      width: min(560px, 92vw);
+      background: rgba(255,255,255,.92);
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.8);
+      box-shadow: 0 30px 70px rgba(0,0,0,.22);
+      padding: 18px;
+    }
+    .modal h3{ margin: 6px 0 6px; font-size: 18px; }
+    .modal p{ margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+    .modal .row{ justify-content:flex-end; }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(0,0,0,.10);
+      box-shadow: 0 16px 35px rgba(0,0,0,.16);
+      border-radius: 999px;
+      padding: 10px 14px;
+      display:none;
+      gap:10px;
+      align-items:center;
+      z-index: 1000;
+      backdrop-filter: blur(6px);
+      font-size: 14px;
+      color: var(--ink);
+      animation: pop .18s ease-out;
+    }
+    @keyframes pop{
+      from{ transform: translateX(-50%) translateY(10px); opacity:0; }
+      to{ transform: translateX(-50%) translateY(0); opacity:1; }
+    }
+    .toast .miniDot{
+      width:10px; height:10px; border-radius:999px;
+      background: rgba(124,92,255,.8);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+    }
+
+    /* Confetti */
+    .confetti{
+      position: fixed;
+      top: -12px;
+      width: 10px;
+      height: 14px;
+      border-radius: 3px;
+      opacity: 0.95;
+      z-index: 2000;
+      pointer-events:none;
+      animation: fall linear forwards;
+    }
+    @keyframes fall{
+      to{
+        transform: translateY(calc(100vh + 60px)) rotate(720deg);
+        opacity: 0.95;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">S</div>
+        <div class="title">
+          <b>Squiggle Lite</b>
+          <span>Daily check-ins + streaks (stored on this device)</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn secondary small" id="helpBtn" type="button">Help</button>
+        <button class="btn secondary small" id="exportBtn" type="button">Export</button>
+        <button class="btn danger small" id="resetBtn" type="button">Reset</button>
+      </div>
+    </header>
+
+    <section class="gridTop">
+      <!-- Check-in -->
+      <div class="card">
+        <h2>Today’s check-in</h2>
+        <div class="sub" id="todayLabel"></div>
+
+        <div class="row">
+          <div class="pill"><span class="dot" id="statusDot"></span> Streak: <b id="streakVal">0</b> days</div>
+          <div class="pill">Total: <b id="countVal">0</b></div>
+          <div class="pill">Today: <b id="todayMoodVal">—</b></div>
+        </div>
+
+        <div class="quote" id="quoteBox"></div>
+        <div class="prompt" id="promptBox"><b>Prompt:</b> —</div>
+
+        <div class="moods" id="moods"></div>
+
+        <textarea id="note" placeholder="Quick note… (what made today feel this way?)"></textarea>
+
+        <div class="row" style="justify-content:space-between; margin-top:10px;">
+          <button class="btn ghost small" id="randomQuoteBtn" type="button">New quote</button>
+          <button class="btn ghost small" id="newPromptBtn" type="button">New prompt</button>
+          <button class="btn" id="saveBtn" type="button">Save</button>
+        </div>
+      </div>
+
+      <!-- Insights + Calendar -->
+      <div class="card">
+        <h2>Weekly snapshot</h2>
+        <div class="sub">Last 7 days (quick glance)</div>
+
+        <div class="insightGrid">
+          <div class="stat">
+            <div class="k">Most common mood</div>
+            <div class="v" id="commonMood">—</div>
+          </div>
+          <div class="stat">
+            <div class="k">Check-ins (7d)</div>
+            <div class="v" id="count7">0</div>
+          </div>
+          <div class="stat">
+            <div class="k">Best day this week</div>
+            <div class="v" id="bestDay">—</div>
+          </div>
+          <div class="stat">
+            <div class="k">Latest check-in</div>
+            <div class="v" id="latestDay">—</div>
+          </div>
+        </div>
+
+        <div class="calHeader">
+          <b>Last 30 days</b>
+          <div class="calLegend">
+            <span class="legendDot"></span> none
+            <span class="legendDot l1"></span> low
+            <span class="legendDot l2"></span> mid
+            <span class="legendDot l3"></span> high
+          </div>
+        </div>
+        <div class="calendar" id="calendar"></div>
+      </div>
+    </section>
+
+    <!-- Feed -->
+    <section class="card">
+      <h2>Feed</h2>
+
+      <div class="toolbar">
+        <input id="search" placeholder="Search notes…" />
+        <select id="moodFilter">
+          <option value="all">All moods</option>
+        </select>
+        <select id="sort">
+          <option value="new">Newest first</option>
+          <option value="old">Oldest first</option>
+        </select>
+      </div>
+
+      <div id="feed" class="feed"></div>
+      <p id="empty" class="empty" style="display:none;">No check-ins yet. Save your first one 💜</p>
+    </section>
+  </div>
+
+  <!-- Onboarding/Help Modal -->
+  <div class="modalBackdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="row" style="justify-content:space-between;">
+        <h3 id="modalTitle">Welcome to Squiggle Lite</h3>
+        <button class="btn secondary small" id="closeModalBtn" type="button">Close</button>
+      </div>
+      <p id="modalBody"></p>
+      <div class="row">
+        <button class="btn" id="modalPrimaryBtn" type="button">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="miniDot"></span>
+    <span id="toastText">Saved</span>
+  </div>
+
+  <script>
+    // ===== Storage keys =====
+    const STORAGE_KEY = "squiggle_lite_entries_v3";
+    const ONBOARD_KEY = "squiggle_lite_onboarded_v1";
+
+    // ===== Data =====
+    const MOODS = [
+      { key:"great", label:"Great", emoji:"😁", score: 5 },
+      { key:"good",  label:"Good",  emoji:"🙂", score: 4 },
+      { key:"okay",  label:"Okay",  emoji:"😐", score: 3 },
+      { key:"meh",   label:"Meh",   emoji:"😕", score: 2 },
+      { key:"rough", label:"Rough", emoji:"😩", score: 1 },
+    ];
+
+    const QUOTES = [
+      "Tiny progress still counts.",
+      "Make it small. Make it easy.",
+      "You don’t need perfect. You need done.",
+      "Today’s check-in is data, not judgment.",
+      "One step is enough.",
+      "Start with the next 30 seconds.",
+      "Your future self loves this.",
+      "Low friction beats high motivation."
+    ];
+
+    const PROMPTS = [
+      "What gave you the biggest boost today?",
+      "What drained you today — and what would help tomorrow?",
+      "What’s one tiny thing you can do in the next 10 minutes?",
+      "What’s something you’re proud of from today?",
+      "What’s one thing you can make easier for Future You?",
+      "What’s a boundary you kept (or want to keep) today?",
+      "What’s one thing you want to remember about today?",
+      "What’s a small win you can count, even if the day was messy?",
+      "What’s a task you avoided — what’s the tiniest first step?",
+      "Who or what supported you today?"
+    ];
+
+    // ===== Elements =====
+    const moodsEl = document.getElementById("moods");
+    const noteEl = document.getElementById("note");
+    const feedEl = document.getElementById("feed");
+    const emptyEl = document.getElementById("empty");
+    const streakVal = document.getElementById("streakVal");
+    const countVal = document.getElementById("countVal");
+    const quoteBox = document.getElementById("quoteBox");
+    const promptBox = document.getElementById("promptBox");
+    const randomQuoteBtn = document.getElementById("randomQuoteBtn");
+    const newPromptBtn = document.getElementById("newPromptBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const exportBtn = document.getElementById("exportBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const helpBtn = document.getElementById("helpBtn");
+
+    const todayLabel = document.getElementById("todayLabel");
+    const todayMoodVal = document.getElementById("todayMoodVal");
+    const statusDot = document.getElementById("statusDot");
+
+    const searchEl = document.getElementById("search");
+    const moodFilterEl = document.getElementById("moodFilter");
+    const sortEl = document.getElementById("sort");
+
+    const commonMoodEl = document.getElementById("commonMood");
+    const count7El = document.getElementById("count7");
+    const bestDayEl = document.getElementById("bestDay");
+    const latestDayEl = document.getElementById("latestDay");
+
+    const calendarEl = document.getElementById("calendar");
+
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const modalPrimaryBtn = document.getElementById("modalPrimaryBtn");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+
+    const toast = document.getElementById("toast");
+    const toastText = document.getElementById("toastText");
+
+    // ===== State =====
+    let selectedMood = null;
+    let editId = null;
+    let toastTimer = null;
+    let currentPrompt = null;
+
+    // ===== Helpers =====
+    function isoDateLocal(d = new Date()){
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+    function niceDate(iso){
+      const [y,m,d] = iso.split("-").map(Number);
+      const dt = new Date(y, m-1, d);
+      return dt.toLocaleDateString(undefined, { weekday:"short", month:"short", day:"numeric" });
+    }
+    function escapeHtml(str){
+      return (str || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function showToast(msg){
+      toastText.textContent = msg;
+      toast.style.display = "inline-flex";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.style.display = "none", 1400);
+    }
+
+    function setQuote(){
+      quoteBox.textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    }
+
+    function setPrompt(forceNew = false){
+      // Avoid rerolling to the same prompt back-to-back
+      let next = PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
+      if(forceNew && PROMPTS.length > 1){
+        while(next === currentPrompt){
+          next = PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
+        }
+      }
+      currentPrompt = next;
+      promptBox.innerHTML = `<b>Prompt:</b> ${escapeHtml(currentPrompt)}`;
+    }
+
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      }catch{
+        return [];
+      }
+    }
+    function saveAll(entries){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }
+
+    function computeStreak(entries){
+      if(entries.length === 0) return 0;
+      const days = Array.from(new Set(entries.map(e => e.date))).sort().reverse();
+
+      let streak = 0;
+      let cursor = new Date();
+      cursor.setHours(0,0,0,0);
+
+      for(const dayIso of days){
+        const [y,m,d] = dayIso.split("-").map(Number);
+        const day = new Date(y, m-1, d);
+        day.setHours(0,0,0,0);
+
+        if(day.getTime() === cursor.getTime()){
+          streak++;
+          cursor.setDate(cursor.getDate() - 1);
+        } else break;
+      }
+      return streak;
+    }
+
+    function lastNDaysIso(n){
+      const out = [];
+      const d = new Date();
+      d.setHours(0,0,0,0);
+      for(let i=0;i<n;i++){
+        const copy = new Date(d);
+        copy.setDate(d.getDate() - i);
+        out.push(isoDateLocal(copy));
+      }
+      return out; // newest->older
+    }
+
+    function weeklyInsights(entries){
+      const days7 = new Set(lastNDaysIso(7));
+      const last7 = entries.filter(e => days7.has(e.date));
+
+      count7El.textContent = String(last7.length);
+
+      if(last7.length === 0){
+        commonMoodEl.textContent = "—";
+        bestDayEl.textContent = "—";
+        latestDayEl.textContent = "—";
+        return;
+      }
+
+      const counts = {};
+      for(const e of last7){
+        counts[e.mood] = (counts[e.mood] || 0) + 1;
+      }
+      let topMood = null, topCount = -1;
+      for(const k in counts){
+        if(counts[k] > topCount){
+          topCount = counts[k];
+          topMood = k;
+        }
+      }
+      const m = MOODS.find(x => x.key === topMood);
+      commonMoodEl.textContent = m ? `${m.emoji} ${m.label}` : "—";
+
+      const scored = last7.map(e => ({
+        ...e,
+        score: (MOODS.find(x => x.key === e.mood)?.score ?? 0)
+      }));
+      scored.sort((a,b) => (b.score - a.score) || (b.date.localeCompare(a.date)));
+      bestDayEl.textContent = `${niceDate(scored[0].date)}`;
+
+      const latest = last7.slice().sort((a,b)=> b.date.localeCompare(a.date))[0];
+      latestDayEl.textContent = `${niceDate(latest.date)}`;
+    }
+
+    function todayEntry(entries){
+      const t = isoDateLocal();
+      const todays = entries.filter(e => e.date === t);
+      if(!todays.length) return null;
+      return todays.slice().sort((a,b)=> (b.createdAt || "").localeCompare(a.createdAt || ""))[0];
+    }
+
+    function updateHeaderBadges(entries){
+      const streak = computeStreak(entries);
+      streakVal.textContent = String(streak);
+      countVal.textContent = String(entries.length);
+
+      const t = todayEntry(entries);
+      if(t){
+        const m = MOODS.find(x => x.key === t.mood);
+        todayMoodVal.textContent = m ? `${m.emoji} ${m.label}` : "—";
+      } else {
+        todayMoodVal.textContent = "—";
+      }
+
+      statusDot.className = "dot";
+      if(streak >= 7) statusDot.classList.add("good");
+      else if(streak >= 3) statusDot.classList.add("warn");
+      else statusDot.classList.add("bad");
+
+      todayLabel.textContent = `${new Date().toLocaleDateString(undefined, { weekday:"long", month:"long", day:"numeric" })}`;
+      return streak;
+    }
+
+    // ===== Confetti celebration (Add-in #1) =====
+    function launchConfetti(intensity = 40){
+      const count = Math.max(18, Math.min(120, intensity));
+      for(let i=0;i<count;i++){
+        const c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = (Math.random() * 100) + "vw";
+        c.style.animationDuration = (1.8 + Math.random() * 1.4) + "s";
+        c.style.animationDelay = (Math.random() * 0.2) + "s";
+        c.style.transform = `translateY(0) rotate(${Math.random()*360}deg)`;
+        c.style.background = `hsl(${Math.floor(Math.random()*360)}, 85%, 70%)`;
+        c.style.width = (8 + Math.random()*8) + "px";
+        c.style.height = (10 + Math.random()*10) + "px";
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 3800);
+      }
+    }
+
+    // ===== UI renderers =====
+    function renderMoodButtons(){
+      moodsEl.innerHTML = "";
+      MOODS.forEach(m => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "moodBtn";
+        btn.setAttribute("data-active","false");
+        btn.innerHTML = `<span>${m.emoji}</span> <small>${m.label}</small>`;
+        btn.addEventListener("click", () => {
+          selectedMood = m.key;
+          [...moodsEl.children].forEach(c => c.setAttribute("data-active","false"));
+          btn.setAttribute("data-active","true");
+        });
+        moodsEl.appendChild(btn);
+      });
+    }
+
+    function renderMoodFilterOptions(){
+      while(moodFilterEl.options.length > 1) moodFilterEl.remove(1);
+      for(const m of MOODS){
+        const opt = document.createElement("option");
+        opt.value = m.key;
+        opt.textContent = `${m.emoji} ${m.label}`;
+        moodFilterEl.appendChild(opt);
+      }
+    }
+
+    function applyFilters(entries){
+      const q = (searchEl.value || "").trim().toLowerCase();
+      const mood = moodFilterEl.value;
+      let out = entries.slice();
+
+      if(mood && mood !== "all"){
+        out = out.filter(e => e.mood === mood);
+      }
+      if(q){
+        out = out.filter(e => (e.note || "").toLowerCase().includes(q) || (e.date || "").includes(q));
+      }
+
+      const sort = sortEl.value;
+      out.sort((a,b)=>{
+        const aKey = (a.date || "") + "|" + (a.createdAt || "");
+        const bKey = (b.date || "") + "|" + (b.createdAt || "");
+        return sort === "old" ? aKey.localeCompare(bKey) : bKey.localeCompare(aKey);
+      });
+
+      return out;
+    }
+
+    function setEditorFromEntry(entry){
+      editId = entry.id;
+      selectedMood = entry.mood;
+      noteEl.value = entry.note || "";
+      if(entry.prompt){
+        currentPrompt = entry.prompt;
+        promptBox.innerHTML = `<b>Prompt:</b> ${escapeHtml(currentPrompt)}`;
+      }
+
+      [...moodsEl.children].forEach((btn, idx) => {
+        const m = MOODS[idx];
+        btn.setAttribute("data-active", m.key === selectedMood ? "true" : "false");
+      });
+
+      saveBtn.textContent = "Update";
+      showToast("Editing…");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function resetEditor(){
+      editId = null;
+      selectedMood = null;
+      noteEl.value = "";
+      [...moodsEl.children].forEach(btn => btn.setAttribute("data-active","false"));
+      saveBtn.textContent = "Save";
+      setPrompt(false);
+    }
+
+    // ===== Calendar (Add-in #3) =====
+    function moodToLevel(moodKey){
+      const s = MOODS.find(m=>m.key===moodKey)?.score ?? 0;
+      if(s <= 0) return 0;
+      if(s <= 2) return 1; // low
+      if(s === 3) return 2; // mid
+      return 3; // high
+    }
+
+    function renderCalendar(entries){
+      const days = lastNDaysIso(30).slice().reverse(); // oldest -> newest
+      const map = new Map();
+      for(const e of entries){
+        // if multiple same day, pick the latest createdAt
+        const existing = map.get(e.date);
+        if(!existing) map.set(e.date, e);
+        else {
+          const a = existing.createdAt || "";
+          const b = e.createdAt || "";
+          if(b.localeCompare(a) > 0) map.set(e.date, e);
+        }
+      }
+
+      const today = isoDateLocal();
+      calendarEl.innerHTML = "";
+
+      for(const iso of days){
+        const e = map.get(iso);
+        const level = e ? moodToLevel(e.mood) : 0;
+        const cell = document.createElement("div");
+        cell.className = "dayCell";
+        cell.dataset.level = String(level);
+        cell.dataset.today = (iso === today) ? "true" : "false";
+
+        const dayNum = Number(iso.split("-")[2]);
+        const emoji = e ? (MOODS.find(m=>m.key===e.mood)?.emoji ?? "") : "";
+
+        const tipNote = e ? (e.note || "").trim() : "";
+        const tipLine = e ? `${emoji} ${MOODS.find(m=>m.key===e.mood)?.label ?? ""}` : "No check-in";
+
+        cell.innerHTML = `
+          <div>${dayNum}</div>
+          ${emoji ? `<div class="cellEmoji">${emoji}</div>` : ``}
+          <div class="cellTip">
+            <div style="font-weight:800; margin-bottom:6px;">${niceDate(iso)}</div>
+            <div style="margin-bottom:6px;">${escapeHtml(tipLine)}</div>
+            <div style="color:rgba(0,0,0,.65);">${escapeHtml(tipNote ? (tipNote.length>90 ? tipNote.slice(0,90)+"…" : tipNote) : "")}</div>
+          </div>
+        `;
+        calendarEl.appendChild(cell);
+      }
+    }
+
+    function renderFeed(){
+      const entries = load();
+      const currentStreak = updateHeaderBadges(entries);
+      weeklyInsights(entries);
+      renderCalendar(entries);
+
+      const filtered = applyFilters(entries);
+
+      feedEl.innerHTML = "";
+      emptyEl.style.display = entries.length ? "none" : "block";
+
+      for(const e of filtered){
+        const mood = MOODS.find(m => m.key === e.mood) || { emoji:"🙂", label:e.mood };
+        const promptLine = e.prompt ? `<div style="margin:8px 0 0; color:var(--muted); font-size:12px;"><b>Prompt:</b> ${escapeHtml(e.prompt)}</div>` : "";
+
+        const div = document.createElement("div");
+        div.className = "entry";
+        div.innerHTML = `
+          <div class="entryTop">
+            <div class="badge"><span>${mood.emoji}</span> <b>${mood.label}</b></div>
+            <div class="date">${niceDate(e.date)}</div>
+          </div>
+          <p class="note">${escapeHtml(e.note || "")}</p>
+          ${promptLine}
+          <div class="entryActions">
+            <button class="btn secondary small" data-edit="${e.id}" type="button">Edit</button>
+            <button class="btn danger small" data-del="${e.id}" type="button">Delete</button>
+          </div>
+        `;
+        feedEl.appendChild(div);
+      }
+
+      feedEl.querySelectorAll("[data-edit]").forEach(btn=>{
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-edit");
+          const entry = load().find(x => x.id === id);
+          if(entry) setEditorFromEntry(entry);
+        });
+      });
+      feedEl.querySelectorAll("[data-del]").forEach(btn=>{
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-del");
+          const entry = load().find(x => x.id === id);
+          if(!entry) return;
+
+          const ok = confirm(`Delete this check-in from ${niceDate(entry.date)}?`);
+          if(!ok) return;
+
+          const entries = load().filter(x => x.id !== id);
+          saveAll(entries);
+
+          if(editId === id) resetEditor();
+          showToast("Deleted");
+          renderFeed();
+        });
+      });
+
+      return currentStreak;
+    }
+
+    // ===== Save logic =====
+    function upsertEntry(entries, entry){
+      const idx = entries.findIndex(e => e.id === entry.id);
+      if(idx >= 0) entries[idx] = entry;
+      else entries.push(entry);
+      return entries;
+    }
+
+    saveBtn.addEventListener("click", () => {
+      if(!selectedMood){
+        alert("Pick a mood first 🙂");
+        return;
+      }
+      const note = (noteEl.value || "").trim();
+      const now = new Date().toISOString();
+
+      const entries = load();
+      const prevStreak = computeStreak(entries);
+
+      if(editId){
+        const existing = entries.find(e => e.id === editId);
+        if(!existing){
+          resetEditor();
+          showToast("Edit expired");
+          return;
+        }
+        const updated = {
+          ...existing,
+          mood: selectedMood,
+          note,
+          prompt: currentPrompt,
+          updatedAt: now
+        };
+        saveAll(upsertEntry(entries, updated));
+        showToast("Updated");
+        resetEditor();
+      } else {
+        const entry = {
+          id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
+          date: isoDateLocal(),
+          mood: selectedMood,
+          note,
+          prompt: currentPrompt,
+          createdAt: now
+        };
+        saveAll(upsertEntry(entries, entry));
+        showToast("Saved");
+        resetEditor();
+      }
+
+      setQuote();
+      setPrompt(true);
+
+      const newStreak = renderFeed();
+
+      // Confetti celebration when streak increases (Add-in #1)
+      if(newStreak > prevStreak){
+        launchConfetti(55 + newStreak * 2);
+        showToast(`Streak +1 🎉 (${newStreak})`);
+      }
+    });
+
+    // ===== Toolbar events =====
+    randomQuoteBtn.addEventListener("click", () => setQuote());
+    newPromptBtn.addEventListener("click", () => setPrompt(true));
+
+    searchEl.addEventListener("input", () => renderFeed());
+    moodFilterEl.addEventListener("change", () => renderFeed());
+    sortEl.addEventListener("change", () => renderFeed());
+
+    // ===== Export / reset =====
+    exportBtn.addEventListener("click", () => {
+      const entries = load();
+      const blob = new Blob([JSON.stringify(entries, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "squiggle-lite-data.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("Exported");
+    });
+
+    resetBtn.addEventListener("click", () => {
+      const ok = confirm("Reset Squiggle Lite? This deletes local check-ins on this device.");
+      if(!ok) return;
+      localStorage.removeItem(STORAGE_KEY);
+      resetEditor();
+      setQuote();
+      setPrompt(true);
+      renderFeed();
+      showToast("Reset");
+    });
+
+    // ===== Modal =====
+    function openModal(title, body, primaryText="Got it"){
+      modalTitle.textContent = title;
+      modalBody.textContent = body;
+      modalPrimaryBtn.textContent = primaryText;
+      modalBackdrop.style.display = "grid";
+    }
+    function closeModal(){
+      modalBackdrop.style.display = "none";
+    }
+    closeModalBtn.addEventListener("click", closeModal);
+    modalPrimaryBtn.addEventListener("click", closeModal);
+    modalBackdrop.addEventListener("click", (e) => {
+      if(e.target === modalBackdrop) closeModal();
+    });
+
+    helpBtn.addEventListener("click", () => {
+      openModal(
+        "How it works",
+        "Pick a mood → add a note → Save. Prompts help you write. The calendar shows your last 30 days at a glance. Search + Filter finds entries. Export downloads your data as JSON. Reset clears only this device.",
+        "Close"
+      );
+    });
+
+    // ===== Init =====
+    renderMoodButtons();
+    renderMoodFilterOptions();
+    setQuote();
+    setPrompt(true);
+    renderFeed();
+
+    // Onboarding (first run)
+    const onboarded = localStorage.getItem(ONBOARD_KEY);
+    if(!onboarded){
+      openModal(
+        "Welcome to Squiggle Lite",
+        "Daily check-ins, prompts to reduce blank-page friction, and a 30-day view to spot patterns. Your data stays on this device. You can export anytime.",
+        "Let’s go"
+      );
+      localStorage.setItem(ONBOARD_KEY, "true");
+    }
+  </script>
+</body>
+</html>
