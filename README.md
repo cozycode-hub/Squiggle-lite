@@ -8,14 +8,14 @@ This project exists to explore core product ideas - low-friction check-ins, gent
 
 ##  ✨ What Squiggle Lite Does
 
-**Daily mood check-ins** with quick notes
-**Gentle streak tracking** (with celebratory confetti 🎉)
-**Daily prompts** to reduce blank-page friction
-**Weekly snapshot** to spot short-term patterns
-**30-day calendar view** for visual trend awareness
-**Search, filter, edit, and delete** entries
-**Local-first storage** (data stays on user's device)
-**Export to JSON** for data ownership
+- **Daily mood check-ins** with quick notes
+- **Gentle streak tracking** (with celebratory confetti 🎉)
+- **Daily prompts** to reduce blank-page friction
+- **Weekly snapshot** to spot short-term patterns
+- **30-day calendar view** for visual trend awareness
+- **Search, filter, edit, and delete** entries
+- **Local-first storage** (data stays on user's device)
+- **Export to JSON** for data ownership
 
 ---
 
